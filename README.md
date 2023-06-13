@@ -29,7 +29,7 @@ Allows the creation of a single user.
 #### Response :
 ```javascript
   {
-    _id: Object_ID,
+    id: Object_ID,
     firstname: String,
     lastname: String,
     age: Number,
@@ -58,7 +58,7 @@ Show an user by id.
 #### Response :
 ```javascript
   {
-    _id: Object_ID,
+    id: Object_ID,
     firstname: String,
     lastname: String,
     age: Number,
@@ -67,16 +67,16 @@ Show an user by id.
 ```
 
 ### Requirements
-* node 16
-* npm or yarn
+* node 18
+* npm or yarn or pnpm
 * git
 * mongodb (please configure config.js for link mongodb)
 
 ### Install
-```yarn install```
+```npm i```
 
 ### Production mode
-```yarn prod```
+```npm run prod```
 
 ### Dev mode
-``` yarn dev```
+```npm run dev```
