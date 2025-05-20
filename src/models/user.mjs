@@ -5,7 +5,9 @@ const Schema = new mongoose.Schema({
   lastname: String,
   avatar: String,
   age: Number,
-  city: String
+  city: String,
+  username: { type: String, required: true, unique: true },
+  password: { type: String, required: true }
 }, {
   collection: 'users',
   minimize: false,

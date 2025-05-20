@@ -1,5 +1,6 @@
 import PhotoModel from '../models/photo.mjs';
 import AlbumModel from '../models/album.mjs';
+import validatePhotoInput from '../models/validate_photo.mjs';
 
 const Photos = class Photos {
   constructor(app, connect) {
@@ -38,17 +39,28 @@ const Photos = class Photos {
   createInAlbum() {
     this.app.post('/album/:albumId/photo', async (req, res) => {
       try {
+        const validation = validatePhotoInput(req.body);
+        if (!validation.valid) {
+          return res.status(400).json({
+            message: 'Validation échouée',
+            errors: validation.errors
+          });
+        }
+
         const newPhoto = new this.Photo({
           ...req.body,
           album: req.params.albumId
         });
+
         const photo = await newPhoto.save();
         await this.Album.findByIdAndUpdate(req.params.albumId, {
           $push: { photos: photo._id }
         });
-        res.status(200).json(photo);
-      } catch {
-        res.status(400).json({ message: 'Erreur de création' });
+
+        return res.status(200).json(photo);
+      } catch (err) {
+        console.error('[ERROR] createInAlbum ->', err);
+        return res.status(400).json({ message: 'Erreur de création' });
       }
     });
   }

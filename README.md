@@ -1,151 +1,95 @@
 
-# API Albums & Photos
+# API Albums & Photos Securisé 
 
 ## Overview
 Cette API permet de gérer des **albums** et des **photos** avec Express et MongoDB.  
 Elle est destinée à stocker et consulter des images associées à des albums, par des requêtes HTTP.
+Elle inclut également des pratiques de **sécurité**, **validation**, **limitation de requêtes**, et **HTTPS**.
 
 ---
 
 ## Quelques requêtes testé : 
 
-### [POST] Create album  
-Crée un nouvel album.
-* **HTTP request** : `POST → /album`
+### [POST] Create user   
+
+* **HTTP request** : `http://localhost:3000/user`
 
 #### Body :
 ```json
 {
-  "title": "Vacances",
-  "description": "Photos de mes vacances"
+  "firstname": "Tao",
+  "lastname": "Test",
+  "username": "Ta",
+  "password": "123456",
+  "age": 25,
+  "city": "Paris"
 }
+
 ```
 
 #### Response :
 ```json
 {
-    "title": "Vacances",
-    "description": "Photos de mes vacances",
-    "photos": [],
-    "created_at": "2025-05-19T09:30:25.268Z",
-    "id": "682afa2f1202c1a5d159646b"
+    "firstname": "Tao",
+    "lastname": "Test",
+    "age": 25,
+    "city": "Paris",
+    "username": "Ta",
+    "password": "123456",
+    "id": "682c31a6adf7b09549735f01"
 }
 ```
 
 ---
 
-### [GET] Get album with id  
-Trouver un album avec son id.
+### [POST] Get login
 
-* **HTTP request** : `GET → /album/id_album`
+
+* **HTTP request** : `POST→ http://localhost:3000/login`
+
+#### Body :
+```json
+{
+  "username": "Ta"
+}
+```
 
 #### Response :
 ```json
 {
-    "title": "Vacances",
-    "description": "Photos de mes vacances",
-    "photos": [],
-    "created_at": "2025-05-19T09:30:25.268Z",
-    "id": "682afa2f1202c1a5d159646b"
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MmMzMWE2YWRmN2IwOTU0OTczNWYwMSIsInVzZXJuYW1lIjoiVGEiLCJpYXQiOjE3NDc3MjY3NzUsImV4cCI6MTc0NzczMDM3NX0.ae18QlH5uBTmjlRdLO16_WzE11ZwrtSfh2tWkFu7A3E"
 }
 ```
-### [PUT] Update an album
+### [GET] verify login with id 
 Update un album.
 
-* **HTTP request** : `PUT → /album/id_album`
-#### Body :
-```json
-{
-  "title": "Vacances - mises à jour",
-  "description": "Album avec nouvelles photos"
-}
-```
+* **HTTP request** : `GET → http://localhost:3000/user/682c31a6adf7b09549735f01`
 
 #### Response :
 ```json
 {
-    "title": "Vacances - mises à jour",
-    "description": "Album avec nouvelles photos",
-    "photos": [],
-    "created_at": "2025-05-19T09:30:25.268Z",
-    "id": "682afa2f1202c1a5d159646b"
+    "message": "Token manquant ou invalide"
 }
 ```
 ---
 
-### [POST] Add photo to album  
-Ajoute une photo à un album existant.
+### [GET] verify login with id  
+verifier le login en ajoutant le token generer dans Authorization ( Bearer Token)
 
-* **HTTP request** : `POST → /album/:albumId/photo`
-
-#### Body :
-```json
-{
-  "title": "plage",
-  "url": "https://media.routard.com/image/21/7/photo.1439217.jpg",
-  "description": "Photo plage",
-  "album": "i682afa2f1202c1a5d159646b"
-}
-```
+* **HTTP request** : `GET → http://localhost:3000/user/682c31a6adf7b09549735f01`
 
 #### Response :
 ```json
 {
-    "title": "plage",
-    "url": "https://media.routard.com/image/21/7/photo.1439217.jpg",
-    "description": "Photo plage",
-    "album": "682afa2f1202c1a5d159646b",
-    "created_at": "2025-05-19T09:41:37.911Z",
-    "id": "682afcd11202c1a5d159646f"
+    "firstname": "Tao",
+    "lastname": "Test",
+    "age": 25,
+    "city": "Paris",
+    "username": "Ta",
+    "password": "123456",
+    "id": "682c31a6adf7b09549735f01"
 }
 ```
-
----
-
-### [GET] Get all photos in album  
-Retourne toutes les photos d’un album donné.
-
-* **HTTP request** : `GET → /album/:albumId/photos`
-
-#### Response :
-```json
-[
-    {
-        "title": "plage",
-        "url": "https://media.routard.com/image/21/7/photo.1439217.jpg",
-        "description": "Photo plage",
-        "album": "682afa2f1202c1a5d159646b",
-        "created_at": "2025-05-19T09:41:37.911Z",
-        "id": "682afcd11202c1a5d159646f"
-    }
-]
-```
-### [PUT] Update a photo
-Update une photo.
-
-* **HTTP request** : `PUT → /album/id_album/photo/id_photo`
-#### Body :
-```json
-{
-  "title": "photo plage update",
-  "url": "https://media.routard.com/image/21/7/photo.1439217.jpg",
-  "description": "Photo plage update",
-  "album": "682afa2f1202c1a5d159646b"
-}
-```
-
-#### Response :
-```json
-{
-    "title": "photo plage update",
-    "url": "https://media.routard.com/image/21/7/photo.1439217.jpg",
-    "description": "Photo plage update",
-    "album": "682afa2f1202c1a5d159646b",
-    "created_at": "2025-05-19T09:41:37.911Z",
-    "id": "682afcd11202c1a5d159646f"
-}
-```
-
 ---
 
 ## Requirements
@@ -164,5 +108,15 @@ npm install
 ## Dev mode
 ```bash
 npm run dev
+```
+
+## HTTPS
+```bash
+npm run dev-https
+```
+
+## Audit sécurité
+```bash
+npm audit fix
 ```
 

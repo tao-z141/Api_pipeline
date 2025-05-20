@@ -5,6 +5,10 @@ import bodyParser from 'body-parser';
 import compression from 'compression';
 import cors from 'cors';
 import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
+import https from 'https';
+import fs from 'fs';
+import path from 'path';
 
 // Core
 import config from './config.mjs';
@@ -62,10 +66,38 @@ const Server = class Server {
   }
 
   middleware() {
+    const limiter = rateLimit({
+      windowMs: 60 * 60 * 1000,
+      max: 100,
+      message: {
+        code: 429,
+        message: 'Trop de requêtes, veuillez réessayer plus tard.'
+      },
+      standardHeaders: true,
+      legacyHeaders: false,
+    });
+
+    this.app.use(limiter);
     this.app.use(compression());
-    this.app.use(cors());
+    this.app.use(cors({
+      origin: '*', 
+      methods: ['GET', 'POST', 'PUT', 'DELETE'],
+      allowedHeaders: ['Content-Type', 'Authorization']
+    }));
     this.app.use(bodyParser.urlencoded({ extended: true }));
     this.app.use(bodyParser.json());
+  }
+
+  createHttpsServer() {
+    const keyPath = path.resolve('./server.key');
+    const certPath = path.resolve('./server.cert');
+
+    const options = {
+      key: fs.readFileSync(keyPath),
+      cert: fs.readFileSync(certPath)
+    };
+
+    return https.createServer(options, this.app);
   }
 
   routes() {
@@ -92,7 +124,12 @@ const Server = class Server {
       this.security();
       this.middleware();
       this.routes();
-      this.app.listen(this.config.port);
+
+      const httpsServer = this.createHttpsServer();
+      httpsServer.listen(this.config.port, () => {
+        console.log(`Serveur HTTPS démarré sur le port ${this.config.port}`);
+      });
+
     } catch (err) {
       console.error(`[ERROR] Server -> ${err}`);
     }
