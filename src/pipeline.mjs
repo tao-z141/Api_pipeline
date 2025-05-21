@@ -54,6 +54,35 @@ async function getRandomName() {
   return res.data[0];
 }
 
+async function getRandomWord() {
+  const res = await axios.get('https://random-word-api.herokuapp.com/word?number=1');
+  return res.data[0];
+}
+
+async function getPet() {
+  const res = await axios.get('https://api.thedogapi.com/v1/breeds');
+  const randomIndex = Math.floor(Math.random() * res.data.length);
+  return res.data[randomIndex].name;
+}
+
+
+async function getJoke() {
+  const res = await axios.get('https://official-joke-api.appspot.com/jokes/programming/random');
+  return {
+    type: res.data[0].type,
+    content: `${res.data[0].setup} ${res.data[0].punchline}`
+  };
+}
+
+async function getQuote() {
+  const res = await axios.get('https://zenquotes.io/api/random');
+  const data = res.data[0];
+  return {
+    content: data.q,
+    author: data.a
+  };
+}
+
 async function AllFunctions() {
   try {
 
@@ -71,6 +100,18 @@ async function AllFunctions() {
 
     const nom = await getRandomName();
     console.log('Random name:', nom);
+
+    const word = await getRandomWord();
+    console.log('Random word:', word);
+
+    const animal = await getPet();
+    console.log('Pet:', animal);
+
+    const joke = await getJoke();
+    console.log('Joke:', joke);
+
+    const quote = await getQuote();
+    console.log('Quote:', `"${quote.content}" — ${quote.author}`);
 
   } catch (err) {
     console.error('Erreur:', err.message);
